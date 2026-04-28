@@ -14,6 +14,7 @@ const previewZoom = document.querySelector('#preview-zoom');
 const previewZoomLabel = document.querySelector('#preview-zoom-label');
 const downloadLink = document.querySelector('#download-link');
 const printButton = document.querySelector('#print-button');
+const colorMode = document.querySelector('#color-mode');
 const statusBox = document.querySelector('#status');
 
 let currentJobId = null;
@@ -149,7 +150,11 @@ async function printCurrentJob() {
   setStatus('Invio alla Canon TC-20 sul rullo…');
 
   try {
-    const response = await fetch(`/jobs/${currentJobId}/print`, { method: 'POST' });
+    const response = await fetch(`/jobs/${currentJobId}/print`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ colorMode: colorMode.value }),
+    });
     const payload = await response.json();
     if (!response.ok || !payload.ok) {
       throw new Error(payload.stderr || payload.stdout || 'Stampa fallita');

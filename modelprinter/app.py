@@ -67,6 +67,11 @@ def create_app() -> Flask:
             raise ValueError("Lo spessore deve stare tra 0.1 e 10")
         return _decimal_text(width)
 
+    def _requested_color_mode() -> str:
+        """BN di default: se manca il colore, non facciamo i preziosi."""
+        color_mode = _request_value("colorMode", "monochrome")
+        return "color" if color_mode == "color" else "monochrome"
+
     def _requested_scale() -> str:
         """Valida la scala percentuale reale del PDF."""
         raw_scale = _request_value("scalePercent", "100")
@@ -143,7 +148,7 @@ def create_app() -> Flask:
             return jsonify({"ok": False, "error": "PDF non trovato"}), 404
 
         page_size = read_first_page_size(pdf_path)
-        result = printer.print_pdf(pdf_path, extra_options=[page_size.cups_custom_media])
+        result = printer.print_pdf(pdf_path, extra_options=[page_size.cups_custom_media], color_mode=_requested_color_mode())
         return jsonify(
             {
                 "ok": result.ok,

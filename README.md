@@ -16,6 +16,8 @@ Nasce per quei PDF da cartamodello o plotter in cui i tratti sono troppo fini: c
 - Slider per **scala reale** del PDF, default `100%`.
 - Rotazione automatica dei PDF landscape per visualizzarli/stamparli in verticale, più naturale su rullo.
 - Zoom preview separato, utile per controllare lo spessore senza cambiare il file.
+- Stampa in bianco e nero o a colori, con bianco e nero come default.
+- Margine iniziale automatico da 10 mm per evitare tagli sul rullo.
 - Invio in stampa tramite CUPS/IPP.
 - Opzioni pensate per Canon TC-20: `MainRoll`, taglio automatico, formato custom basato sulla dimensione reale del PDF.
 
@@ -57,6 +59,8 @@ It is meant for PDFs where vector lines are too thin: upload the file, choose a 
 - **Real PDF scale** slider, default `100%`.
 - Automatic landscape-to-portrait rotation, better suited for roll printing.
 - Separate preview zoom, useful to inspect line thickness without changing the file.
+- Black-and-white or color printing, with black-and-white as default.
+- Automatic 10 mm leading margin to avoid cuts on the roll.
 - Printing through CUPS/IPP.
 - Canon TC-20 oriented options: `MainRoll`, automatic cut, custom media size derived from the processed PDF.
 

@@ -22,9 +22,10 @@ class CupsPrinter:
         self.printer_name = printer_name
         self.default_options = default_options or []
 
-    def print_pdf(self, pdf_path: Path, extra_options: list[str] | None = None) -> PrintResult:
+    def print_pdf(self, pdf_path: Path, extra_options: list[str] | None = None, color_mode: str = "monochrome") -> PrintResult:
         """Invia un PDF alla Canon TC-20 / stampante CUPS configurata."""
-        options = [*self.default_options, *(extra_options or [])]
+        color_option = "print-color-mode=color" if color_mode == "color" else "print-color-mode=monochrome"
+        options = [*self.default_options, color_option, *(extra_options or [])]
         command = ["lp", "-d", self.printer_name]
         for option in options:
             # Ogni opzione resta separata, cussì no ghe femo far magie alla shell.

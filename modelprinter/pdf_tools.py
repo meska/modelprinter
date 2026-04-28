@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
+
+POINTS_PER_MM = Decimal("72") / Decimal("25.4")
+TOP_MARGIN_MM = Decimal("10")
 from pathlib import Path
 
 import pikepdf
@@ -40,6 +43,7 @@ class PdfStrokeThickener:
             for page in pdf.pages:
                 self._process_page(pdf, page)
                 self._scale_page(page)
+                self._add_roll_leading_margin(page)
                 self._rotate_landscape_page_for_roll(page)
             pdf.save(destination)
 
@@ -62,6 +66,27 @@ class PdfStrokeThickener:
         page.contents_add(f"q {scale} 0 0 {scale} 0 0 cm\n".encode(), prepend=True)
         page.contents_add(b"\nQ\n")
         page.MediaBox = pikepdf.Array([left, bottom, left + width * self.scale_factor, bottom + height * self.scale_factor])
+        if "/CropBox" in page:
+            page.CropBox = page.MediaBox
+
+    @staticmethod
+    def _add_roll_leading_margin(page: pikepdf.Page) -> None:
+        """Aggiunge 10 mm di bianco in testa al foglio, così la TC-20 non taglia."""
+        left, bottom, right, top = [Decimal(str(value)) for value in page.MediaBox]
+        margin_points = TOP_MARGIN_MM * POINTS_PER_MM
+        width = right - left
+        height = top - bottom
+
+        if width > height:
+            # Dopo la rotazione per rullo, questa dimensione diventa la lunghezza verticale.
+            page.MediaBox = pikepdf.Array([left, bottom, right + margin_points, top])
+            if "/CropBox" in page:
+                page.CropBox = page.MediaBox
+            return
+
+        page.contents_add(f"q 1 0 0 1 0 {PdfStrokeThickener._pdf_number(margin_points)} cm\n".encode(), prepend=True)
+        page.contents_add(b"\nQ\n")
+        page.MediaBox = pikepdf.Array([left, bottom, right, top + margin_points])
         if "/CropBox" in page:
             page.CropBox = page.MediaBox
 
