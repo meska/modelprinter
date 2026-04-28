@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="it" data-bs-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ModelPrinter</title>
+    <link rel="stylesheet" href="/static/vendor/bootstrap.min.css?v=1" />
+    <link rel="stylesheet" href="/static/app.css?v=3" />
+  </head>
+  <body>
+    <main class="container-fluid px-3 px-lg-4 py-3 py-lg-4">
+      <header class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+        <div class="d-flex align-items-center gap-3">
+          <div class="brand-mark shadow-lg">MP</div>
+          <div>
+            <div class="text-warning text-uppercase fw-bold small tracking">Canon TC-20 · rullo 24″ / 610 mm</div>
+            <h1 class="display-5 fw-black mb-0">ModelPrinter</h1>
+            <div class="text-secondary">Upload PDF, rinforzo tratti sottili e stampa su {{ printer_name }}</div>
+          </div>
+        </div>
+        <div class="badge rounded-pill text-bg-success fs-6 px-3 py-2 align-self-start align-self-lg-center">
+          Stampante pronta · tratto minimo {{ min_stroke_width }}
+        </div>
+      </header>
+
+      <div class="row g-4 align-items-stretch">
+        <aside class="col-12 col-xl-4 col-xxl-3">
+          <div class="card glass-card h-100 shadow-lg">
+            <div class="card-body p-4">
+              <div class="step-label mb-2">1 · Carica PDF</div>
+              <section id="dropzone" class="dropzone rounded-4 p-4 mb-4" tabindex="0">
+                <input id="file-input" type="file" accept="application/pdf,.pdf" hidden />
+                <div class="upload-icon mx-auto mb-3">↧</div>
+                <h2 class="h4 fw-bold mb-1">Trascina qui il PDF</h2>
+                <p class="text-secondary mb-0">oppure clicca per scegliere il file</p>
+              </section>
+
+              <div class="step-label mb-2">2 · Scegli tratto</div>
+              <div class="stroke-control rounded-4 p-3 mb-4">
+                <div class="d-flex align-items-center justify-content-between gap-3 mb-2">
+                  <label for="stroke-width" class="form-label mb-0 text-secondary">Spessore globale</label>
+                  <output id="stroke-width-label" class="badge text-bg-warning text-dark fs-6">{{ min_stroke_width }}</output>
+                </div>
+                <input id="stroke-width" class="form-range" type="range" min="0.2" max="3" step="0.1" value="{{ min_stroke_width }}" />
+                <div class="d-flex justify-content-between small text-secondary">
+                  <span>fine</span>
+                  <span>marcato</span>
+                </div>
+              </div>
+
+              <div class="step-label mb-2">3 · Scala</div>
+              <div class="stroke-control rounded-4 p-3 mb-4">
+                <div class="d-flex align-items-center justify-content-between gap-3 mb-2">
+                  <label for="scale-percent" class="form-label mb-0 text-secondary">Scala reale</label>
+                  <output id="scale-percent-label" class="badge text-bg-info text-dark fs-6">100%</output>
+                </div>
+                <input id="scale-percent" class="form-range" type="range" min="50" max="150" step="1" value="100" />
+                <div class="d-flex justify-content-between small text-secondary">
+                  <span>50%</span>
+                  <span>100%</span>
+                  <span>150%</span>
+                </div>
+              </div>
+
+              <div class="step-label mb-2">4 · Verifica</div>
+              <div class="row g-2 mb-4">
+                <div class="col-6">
+                  <div class="metric rounded-4 p-3">
+                    <div class="text-secondary small">Formato</div>
+                    <strong id="page-size" class="d-block fs-5">—</strong>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="metric rounded-4 p-3">
+                    <div class="text-secondary small">Tratti rilevati</div>
+                    <strong id="stroke-count" class="d-block fs-5">—</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step-label mb-2">5 · Stampa</div>
+              <button id="print-button" class="btn btn-warning btn-lg w-100 fw-bold py-3" type="button" disabled>
+                Stampa su rullo
+              </button>
+              <a id="download-link" class="btn btn-outline-light w-100 mt-2" href="#" target="_blank" hidden>
+                Apri PDF elaborato
+              </a>
+
+              <div id="status" class="alert alert-secondary mt-4 mb-0" aria-live="polite">
+                In attesa di un PDF.
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="col-12 col-xl-8 col-xxl-9">
+          <div class="card glass-card preview-card shadow-lg h-100">
+            <div class="card-header bg-transparent border-secondary-subtle d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 p-3 p-lg-4">
+              <div class="min-width-0 me-auto">
+                <div class="step-label mb-1">Preview</div>
+                <strong id="job-name" class="text-truncate d-block fs-5">Nessun file caricato</strong>
+              </div>
+              <div class="preview-zoom d-flex align-items-center gap-2">
+                <label for="preview-zoom" class="text-secondary small mb-0">Zoom</label>
+                <input id="preview-zoom" class="form-range preview-zoom-range" type="range" min="50" max="400" step="25" value="150" />
+                <output id="preview-zoom-label" class="badge text-bg-light text-dark">150%</output>
+              </div>
+              <span id="preview-badge" class="badge text-bg-secondary rounded-pill px-3 py-2">PDF</span>
+            </div>
+
+            <div id="empty-preview" class="empty-preview card-body d-flex flex-column align-items-center justify-content-center text-center p-5">
+              <div class="sheet-icon mb-4"></div>
+              <h2 class="h3 fw-bold">La preview appare qui</h2>
+              <p class="text-secondary mb-0 max-copy">Dopo l’upload vedrai il PDF già rinforzato prima di mandarlo alla TC-20.</p>
+            </div>
+
+            <iframe id="preview-frame" class="preview-frame d-none" title="Anteprima PDF modificato"></iframe>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="/static/app.js?v=3"></script>
+  </body>
+</html>

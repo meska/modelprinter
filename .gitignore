@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtualenvs
+.venv/
+venv/
+
+# Local runtime data
+data/
+*.log
+
+# macOS / rsync AppleDouble
+.DS_Store
+._*
+
+# Editors
+.vscode/
+.idea/

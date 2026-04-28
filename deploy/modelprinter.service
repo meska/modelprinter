@@ -1,0 +1,16 @@
+[Unit]
+Description=ModelPrinter web app
+After=network-online.target cups.service
+Wants=network-online.target cups.service
+
+[Service]
+User=modelprinter
+Group=modelprinter
+WorkingDirectory=/opt/modelprinter
+EnvironmentFile=/etc/modelprinter.env
+ExecStart=/opt/modelprinter/.venv/bin/gunicorn --workers 2 --bind 127.0.0.1:8000 wsgi:app
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
