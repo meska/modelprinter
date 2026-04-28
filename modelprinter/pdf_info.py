@@ -15,10 +15,11 @@ class PdfPageSize:
 
     @property
     def cups_custom_media(self) -> str:
-        """Opzione CUPS Custom.WIDTHxHEIGHTmm arrotondata al millimetro."""
+        """Opzione IPP/CUPS Custom.WIDTHxHEIGHTmm arrotondata al millimetro."""
         width = max(1, round(self.width_mm))
         height = max(1, round(self.height_mm))
-        return f"PageSize=Custom.{width}x{height}mm"
+        # IPP Everywhere ragiona su `media`; `PageSize` può lasciare A4 nello spool.
+        return f"media=Custom.{width}x{height}mm"
 
 
 def read_first_page_size(pdf_path: Path) -> PdfPageSize:
